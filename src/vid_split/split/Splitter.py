@@ -2,8 +2,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from vid_split.helpers.ParallelFFmpeg import ParallelFFmpeg
-from vid_split.helpers import cover_utils
+from ..helpers.ParallelFFmpeg import ParallelFFmpeg
+from ..helpers import cover_utils
 
 
 @dataclass
@@ -13,22 +13,24 @@ class Splitter:
     output_dir_path: Path
     segment_list: list
 
+    buffer: float = 0.0
     output_pattern: str = "segment_{i:04d}.mp3"
 
     def split(self):
         """Do the actual splitting."""
-        cover_utils.extract_cover(self.input_path, self.output_dir_path / "cover.png")
-
         # Generate task list
         tasks = list()
         for i, segment in enumerate(self.segment_list):
-            time = segment.end_time - segment.start_time
+            # Apply buffer
+            start = segment.start_time - self.buffer
+            end = segment.end_time + self.buffer
+            time = end - start
 
             self.output_dir_path.mkdir(exist_ok=True)
             output_path = self.output_dir_path / self.output_pattern.format(i, i=i, title=segment.title)
 
-            cmd = ["ffmpeg", "-ss", str(segment.start_time), "-t", str(time), "-i", self.input_path,
-                   "-v:c", "copy", "-map_chapters", "-1", "-y"]
+            cmd = ["ffmpeg", "-ss", str(start), "-t", str(time), "-i", self.input_path,
+                   "-c:v", "copy", "-map_chapters", "-1", "-y"]
             if segment.title:
                 cmd.extend(["-metadata", f"title={segment.title}"])
             cmd.append(output_path)

@@ -107,14 +107,14 @@ def test_run_silencedetect_fail(tmp_path, capsys):
     assert "Could not determine segment times." in output.out
 
 
-def test_run_silencedetect_no_silence(silences_file_path):
+def test_run_silencedetect_no_silence(chaptered_audio_file_path):
     """Get ffmpeg output from a no-silence-detected run."""
     unexpected = [
         "silence_start",
         "silence_end",
         "silence_duration",
     ]
-    sf = SilenceFinder(silences_file_path)
+    sf = SilenceFinder(chaptered_audio_file_path)
     sf._run_silencedetect()
     for item in unexpected:
         match_list = [line for line in sf._ffoutput if item in line]

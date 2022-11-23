@@ -8,7 +8,7 @@ from vid_split.helpers.ParallelFFmpeg import ParallelFFmpeg
 
 
 @pytest.fixture()
-@mock.patch("m4b_util.helpers.ParallelFFmpeg.Progress")
+@mock.patch("vid_split.helpers.ParallelFFmpeg.Progress")
 def processor(progress):
     """Set up the processor and mock out the progress tracker."""
     p = ParallelFFmpeg("Testing")
@@ -96,7 +96,7 @@ def test_read_status_failed(processor):
     ])
 
 
-@mock.patch("m4b_util.helpers.ParallelFFmpeg.FFProgress")
+@mock.patch("vid_split.helpers.ParallelFFmpeg.FFProgress")
 def test_ffmpeg_job(ff, processor):
     """Run a single worker job."""
     # Mock out the run command so we don't have to be dependent on system configurations.
@@ -153,7 +153,7 @@ def test_process_empty_tasklist(processor):
     assert p.process(list()) is None
 
 
-@mock.patch("m4b_util.helpers.ParallelFFmpeg.Progress")
+@mock.patch("vid_split.helpers.ParallelFFmpeg.Progress")
 def test_process(progress):
     """Run a multiprocess job."""
     p = ParallelFFmpeg("Testing")
@@ -178,7 +178,7 @@ def test_process(progress):
     progress().stop.assert_called()
 
 
-@mock.patch("m4b_util.helpers.ParallelFFmpeg.Progress")
+@mock.patch("vid_split.helpers.ParallelFFmpeg.Progress")
 def test_process_crashing_tasks(progress):
     """Run a job with tasks that crash.
 

@@ -1,7 +1,7 @@
 """Utility functions relating to cover images."""
 from rich import print
 
-from vid_split.helpers import ffprogress
+from ..helpers import ffprogress
 
 
 def extract_cover(input_path, output_path):

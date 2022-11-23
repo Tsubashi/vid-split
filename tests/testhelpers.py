@@ -17,7 +17,7 @@ def check_output_folder(output_path, expected_files=None, check_func=None):
 
     # Set defaults
     if expected_files is None:
-        expected_files = ["segment_0000.mp3"]
+        expected_files = ["segment_0000.mp4"]
     if not check_func:
         check_func = default_check
 

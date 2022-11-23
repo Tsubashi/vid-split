@@ -3,7 +3,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import re
 
-from vid_split.helpers import ffprogress
+from rich import print
+
+from ..helpers import ffprogress
 from .SegmentData import SegmentData
 
 
@@ -13,7 +15,7 @@ class SilenceFinder:
     input_path: Path
     start_time: float = 0.0
     end_time: float = 0.0
-    silence_duration: float = 3.0
+    silence_duration: float = 1.0
     silence_threshold: int = -35
     _ffoutput: list = field(init=False, repr=False)
 

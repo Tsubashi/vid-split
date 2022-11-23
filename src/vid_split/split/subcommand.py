@@ -6,30 +6,41 @@ from rich import print
 
 from .SilenceFinder import SilenceFinder
 from .Splitter import Splitter
+from ..__version__ import version
 
 
 def _parse_args():
     parser = argparse.ArgumentParser(
-        prog="m4b-util split",
+        prog="vid-split",
         description='Split media into segments.'
     )
-    parser.add_argument('mode', help='modes: s - silence, c - chapters')
-    parser.add_argument('input_file', help='Input filename')
+    parser.add_argument('input_file', nargs="?", help='Input file (Required)')
 
+    parser.add_argument('-b', "--buffer", type=float, default=0.,
+                        help='Number of second to include before and after each segment.')
     parser.add_argument('-e', "--end-time", type=float, help='End time (seconds)')
-    parser.add_argument('-m', "--minimum_segment_time", type=float, default=1.0,
+    parser.add_argument('-m', "--minimum_segment_time", type=float, default=0.25,
                         help='Smallest segment size to consider, in seconds.')
     parser.add_argument('-o', "--output-dir", type=str, help="Directory to place output.")
-    parser.add_argument('-p', '--output-pattern', type=str, default="segment_{i:04d}.mp3",
-                        help="Output filename pattern (e.g. `segment_{i:04d}.mp3`), use '{i}' for sequence and "
+    parser.add_argument('-p', '--output-pattern', type=str, default="segment_{i:04d}.mp4",
+                        help="Output filename pattern (e.g. `segment_{i:04d}.mp4`), use '{i}' for sequence and "
                              "'{title}' for chapter title.")
     parser.add_argument('-s', "--start-time", type=float, help='Start time (seconds)')
+    parser.add_argument('-V', "--version", action="store_true", help='Show version and exit.')
 
-    silence_options = parser.add_argument_group('split-by-silence options')
+    silence_options = parser.add_argument_group('silence detection options')
     silence_options.add_argument("--silence-threshold", default=-35, type=int, help='Silence threshold (in dB)')
-    silence_options.add_argument("--silence-duration", default=1.0, type=float, help='Silence duration')
+    silence_options.add_argument("--silence-duration", default=0.25, type=float, help='Silence duration')
 
-    return parser.parse_args(sys.argv)
+    args = parser.parse_args()
+    if args.version:
+        print(f"[green]vid-split[/], Version '{version}'")
+        exit(0)
+
+    if not args.input_file:
+        parser.error("Input file is required.")
+
+    return args
 
 
 def run():
@@ -66,6 +77,7 @@ def run():
     else:
         output_path = Path()
     Splitter(
+        buffer=args.buffer,
         input_path=input_path,
         output_dir_path=output_path,
         output_pattern=args.output_pattern,
