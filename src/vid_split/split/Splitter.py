@@ -33,7 +33,7 @@ class Splitter:
             segment_files.append(output_path)
 
             cmd = ["ffmpeg", "-ss", str(start), "-t", str(time), "-i", self.input_path,
-                   "-c:v", "copy", "-map_chapters", "-1", "-y"]
+                   "-map_chapters", "-1", "-y"]
             if segment.title:
                 cmd.extend(["-metadata", f"title={segment.title}"])
             cmd.append(output_path)
